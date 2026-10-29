@@ -4,7 +4,7 @@ import json
 import os
 import sqlite3
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from zoneinfo import ZoneInfo
 
 import httpx
@@ -468,8 +468,29 @@ def main():
     app.add_handler(CallbackQueryHandler(on_city, pattern=r"^c:\d+$"))
     app.add_handler(CallbackQueryHandler(on_before, pattern=r"^b:\d+$"))
     app.job_queue.run_repeating(tick, interval=60, first=10)
+        app.job_queue.run_daily(
+        send_adhkar,
+        time=time(6, 0, tzinfo=TZ),
+        data="🌅 أذكار الصباح\n\nسبحان الله وبحمده، سبحان الله العظيم.\n\nأستغفر الله وأتوب إليه.\n\nاللهم بك أصبحنا وبك أمسينا، وبك نحيا وبك نموت وإليك النشور."
+    )
+
+    app.job_queue.run_daily(
+        send_adhkar,
+        time=time(18, 0, tzinfo=TZ),
+        data="🌇 أذكار المساء\n\nسبحان الله وبحمده، سبحان الله العظيم.\n\nأستغفر الله وأتوب إليه.\n\nاللهم بك أمسينا وبك أصبحنا، وبك نحيا وبك نموت وإليك المصير."
+    )
     log.info("بوت الصلاة يعمل")
     app.run_polling()
+async def send_adhkar(context):
+    message = context.job.data
+    for user in all_users():
+        try:
+            await context.bot.send_message(
+                chat_id=user[0],
+                text=message
+            )
+        except Exception as e:
+            print(f"Error sending adhkar: {e}")
 
 
 if __name__ == "__main__":
