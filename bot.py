@@ -468,7 +468,7 @@ def main():
     app.add_handler(CallbackQueryHandler(on_city, pattern=r"^c:\d+$"))
     app.add_handler(CallbackQueryHandler(on_before, pattern=r"^b:\d+$"))
     app.job_queue.run_repeating(tick, interval=60, first=10)
-        app.job_queue.run_daily(
+    app.job_queue.run_daily(
         send_adhkar,
         time=time(6, 0, tzinfo=TZ),
         data="🌅 أذكار الصباح\n\nسبحان الله وبحمده، سبحان الله العظيم.\n\nأستغفر الله وأتوب إليه.\n\nاللهم بك أصبحنا وبك أمسينا، وبك نحيا وبك نموت وإليك النشور."
